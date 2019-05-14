@@ -1,16 +1,27 @@
+# Find the CYBER ZONE
+data "aws_route53_zone" "cyber_zone" {
+  name = "cyber.dhs.gov."
+}
+
+resource "aws_acm_certificate_validation" "cert" {
+  certificate_arn = "${aws_acm_certificate.cset_cert.arn}"
+
+  # validation_record_fqdns = ["${aws_route53_record.cert_validation.fqdn}"]
+}
+
 # This DNS record gives Amazon Certificate Manager permission to
 # generate certificates for cset.cyber.dhs.gov
-resource "aws_route53_record" "root_acm_rules_CNAME" {
-  zone_id = "${aws_route53_zone.cyber_zone.zone_id}"
-  name    = "${aws_acm_certificate.cset_cert.resource_record_name}"
-  type    = "${aws_acm_certificate.cset_cert.resource_record_type}"
+resource "aws_route53_record" "cert_validation" {
+  zone_id = "${data.aws_route53_zone.cyber_zone.zone_id}"
+  name    = "${aws_acm_certificate.cset_cert.domain_validation_options.0.resource_record_name}"
+  type    = "${aws_acm_certificate.cset_cert.domain_validation_options.0.resource_record_type}"
   ttl     = 60
-  records = ["${aws_acm_certificate.cset_cert.resource_record_value}"]
+  records = ["${aws_acm_certificate.cset_cert.domain_validation_options.0.resource_record_value}"]
 }
 
 resource "aws_route53_record" "rules_ncats_A" {
-  zone_id = "${aws_route53_zone.cyber_zone.zone_id}"
-  name    = "cset.${aws_route53_zone.cyber_zone.name}"
+  zone_id = "${data.aws_route53_zone.cyber_zone.zone_id}"
+  name    = "cset.${data.aws_route53_zone.cyber_zone.name}"
   type    = "A"
 
   alias {
@@ -21,8 +32,8 @@ resource "aws_route53_record" "rules_ncats_A" {
 }
 
 resource "aws_route53_record" "rules_ncats_AAAA" {
-  zone_id = "${aws_route53_zone.cyber_zone.zone_id}"
-  name    = "cset.${aws_route53_zone.cyber_zone.name}"
+  zone_id = "${data.aws_route53_zone.cyber_zone.zone_id}"
+  name    = "cset.${data.aws_route53_zone.cyber_zone.name}"
   type    = "AAAA"
 
   alias {

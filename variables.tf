@@ -17,7 +17,7 @@ variable "tags" {
 variable "cset_s3_bucket_name" {
   type        = "string"
   description = "The name of the bucket where the CSET files will be stored.  Note that in production terraform workspaces, the string '-production' will be appended to the bucket name.  In non-production workspaces, '-<workspace_name>' will be appended to the bucket name."
-  default     = ""
+  default     = "ncats-cset-binaries"
 }
 
 variable "distribution_domain" {

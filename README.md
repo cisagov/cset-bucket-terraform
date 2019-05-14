@@ -1,6 +1,6 @@
 # cset-bucket-terraform 💾 #
 
-[![Build Status](https://travis-ci.com/cisagov/assessment-data-import-terraform.svg?branch=develop)](https://travis-ci.com/cisagov/assessment-data-import-terraform)
+[![Build Status](https://travis-ci.com/cisagov/cset-bucket-terraform.svg?branch=develop)](https://travis-ci.com/cisagov/cset-bucket-terraform)
 
 ## About ##
 

@@ -1,18 +1,20 @@
 locals {
   # bucket origin id
-  s3_origin_id = "S3-${aws_s3_bucket.cset_bucket.id}"
+  s3_origin_id = "S3-${aws_s3_bucket.cset_binaries.id}"
 }
 
-data "aws_acm_certificate" "cset_cert" {
-  domain      = "${var.distribution_domain}"
-  most_recent = true
-  statuses    = ["ISSUED"]
-  types       = ["IMPORTED"]
+resource "aws_acm_certificate" "cset_cert" {
+  domain_name       = "${var.distribution_domain}"
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_cloudfront_distribution" "cset_s3_distribution" {
   origin {
-    domain_name = "${aws_s3_bucket.cset_bucket.bucket_regional_domain_name}"
+    domain_name = "${aws_s3_bucket.cset_binaries.bucket_regional_domain_name}"
     origin_id   = "${local.s3_origin_id}"
   }
 
@@ -46,12 +48,11 @@ resource "aws_cloudfront_distribution" "cset_s3_distribution" {
 
   price_class = "PriceClass_100"
 
-  # restrictions {
-  #   geo_restriction {
-  #     restriction_type = "whitelist"
-  #     locations        = ["US", "PR", "VI", "AS", "GU", "MP"]
-  #   }
-  # }
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
 
   custom_error_response {
     error_code            = 403
@@ -59,14 +60,16 @@ resource "aws_cloudfront_distribution" "cset_s3_distribution" {
     response_code         = 200
     response_page_path    = "/${var.root_object}"
   }
+
   custom_error_response {
     error_code            = 404
     error_caching_min_ttl = 30
     response_code         = 200
     response_page_path    = "/${var.root_object}"
   }
+
   viewer_certificate {
-    acm_certificate_arn      = "${data.aws_acm_certificate.cset_cert.arn}"
+    acm_certificate_arn      = "${aws_acm_certificate.cset_cert.arn}"
     minimum_protocol_version = "TLSv1_2016"
     ssl_support_method       = "sni-only"
   }

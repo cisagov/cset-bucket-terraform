@@ -5,6 +5,8 @@ resource "aws_s3_bucket" "cset_binaries" {
   # '-<workspace_name>' is appended to the bucket name.
   bucket = "${local.production_workspace ? format("%s-production", var.cset_s3_bucket_name) : format("%s-%s", var.cset_s3_bucket_name, terraform.workspace)}"
 
+  acl = "public-read"
+
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {

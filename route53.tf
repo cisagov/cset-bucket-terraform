@@ -1,6 +1,6 @@
 # Find the CYBER ZONE
 data "aws_route53_zone" "cyber_zone" {
-  name = "cyber.dhs.gov."
+  name = "${var.distribution_root_domain}."
 }
 
 resource "aws_acm_certificate_validation" "cert" {
@@ -19,9 +19,9 @@ resource "aws_route53_record" "cert_validation" {
   records = ["${aws_acm_certificate.cset_cert.domain_validation_options.0.resource_record_value}"]
 }
 
-resource "aws_route53_record" "rules_ncats_A" {
+resource "aws_route53_record" "cset_A" {
   zone_id = "${data.aws_route53_zone.cyber_zone.zone_id}"
-  name    = "cset.${data.aws_route53_zone.cyber_zone.name}"
+  name    = "${local.distribution_domain_final}"
   type    = "A"
 
   alias {
@@ -31,9 +31,9 @@ resource "aws_route53_record" "rules_ncats_A" {
   }
 }
 
-resource "aws_route53_record" "rules_ncats_AAAA" {
+resource "aws_route53_record" "cset_AAAA" {
   zone_id = "${data.aws_route53_zone.cyber_zone.zone_id}"
-  name    = "cset.${data.aws_route53_zone.cyber_zone.name}"
+  name    = "${local.distribution_domain_final}"
   type    = "AAAA"
 
   alias {

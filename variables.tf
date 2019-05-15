@@ -20,9 +20,14 @@ variable "cset_s3_bucket_name" {
   default     = "ncats-cset-binaries"
 }
 
-variable "distribution_domain" {
-  description = "The domain name of the cloudfront distribution and certificate."
-  default     = "cset.cyber.dhs.gov"
+variable "distribution_root_domain" {
+  description = "The parent domain name of the cloudfront distribution and certificate."
+  default     = "cyber.dhs.gov"
+}
+
+variable "distribution_sub_domain" {
+  description = "The sub domain name of the cloudfront distribution and certificate."
+  default     = "cset"
 }
 
 variable "root_object" {

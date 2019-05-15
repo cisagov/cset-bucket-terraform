@@ -4,7 +4,7 @@ locals {
 }
 
 resource "aws_acm_certificate" "cset_cert" {
-  domain_name       = "${var.distribution_domain}"
+  domain_name       = "${local.distribution_domain_final}"
   validation_method = "DNS"
 
   lifecycle {
@@ -29,7 +29,7 @@ resource "aws_cloudfront_distribution" "cset_s3_distribution" {
   #   prefix          = "myprefix"
   # }
 
-  aliases = ["${var.distribution_domain}"]
+  aliases = ["${local.distribution_domain_final}"]
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]

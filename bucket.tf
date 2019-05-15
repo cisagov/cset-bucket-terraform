@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "cset_binaries" {
   # Note that in production terraform workspaces, the string '-production' is
   # appended to the bucket name.  In non-production workspaces,
   # '-<workspace_name>' is appended to the bucket name.
-  bucket = "${local.production_workspace ? format("%s-production", var.cset_s3_bucket_name) : format("%s-%s", var.cset_s3_bucket_name, terraform.workspace)}"
+  bucket = "${local.cset_bucket_name}"
 
   acl = "public-read"
 

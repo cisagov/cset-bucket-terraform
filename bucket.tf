@@ -21,3 +21,13 @@ resource "aws_s3_bucket" "cset_binaries" {
     prevent_destroy = true
   }
 }
+
+resource "aws_s3_bucket_object" "index_html" {
+  key                    = "index.html"
+  bucket                 = "${aws_s3_bucket.cset_binaries.id}"
+  source                 = "bucket_content/index.html"
+  content_encoding       = "utf-8"
+  content_type           = "text/html"
+  acl                    = "public-read"
+  server_side_encryption = "AES256"
+}

@@ -23,8 +23,13 @@ resource "aws_cloudfront_distribution" "cset_s3_distribution" {
   comment             = "terraform cset site"
   default_root_object = "${var.root_object}"
 
-  aliases = ["${var.distribution_domain}"]
+  # logging_config {
+  #   include_cookies = false
+  #   bucket          = "mylogs.s3.amazonaws.com"
+  #   prefix          = "myprefix"
+  # }
 
+  aliases = ["${var.distribution_domain}"]
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
@@ -40,34 +45,29 @@ resource "aws_cloudfront_distribution" "cset_s3_distribution" {
 
     viewer_protocol_policy = "allow-all"
     min_ttl                = 0
-    default_ttl            = 30
-    max_ttl                = 30
+    default_ttl            = 3600
+    max_ttl                = 86400
     compress               = true
     viewer_protocol_policy = "redirect-to-https"
   }
-
   price_class = "PriceClass_100"
-
   restrictions {
     geo_restriction {
       restriction_type = "none"
     }
   }
-
   custom_error_response {
     error_code            = 403
     error_caching_min_ttl = 30
     response_code         = 200
     response_page_path    = "/${var.root_object}"
   }
-
   custom_error_response {
     error_code            = 404
     error_caching_min_ttl = 30
     response_code         = 200
     response_page_path    = "/${var.root_object}"
   }
-
   viewer_certificate {
     acm_certificate_arn      = "${aws_acm_certificate.cset_cert.arn}"
     minimum_protocol_version = "TLSv1_2016"
